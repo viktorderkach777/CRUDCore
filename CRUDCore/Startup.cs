@@ -100,6 +100,8 @@ namespace CRUDCore
                     spa.UseReactDevelopmentServer(npmScript: "start");
                 }
             });
+
+            SeederDB.SeedDataByAS(app.ApplicationServices);
         }
     }
 }
