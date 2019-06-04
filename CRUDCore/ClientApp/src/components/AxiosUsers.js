@@ -34,7 +34,15 @@ class AxiosUsers extends Component {
         console.log('-----render----', this.state);
         const content = list.map(item => {
             console.log('---Item render---', item);
-            return <li key={item.id}>{item.email}</li>
+            return  ( <div key={item.id} className="card">
+                    <div className="card-body">
+                        <h4 className="card-title">{item.email}</h4>
+                        <p className="card-text">Some example text some example text. Jane Doe is an architect and engineer</p>
+                        <a href="#" className="btn btn-primary">See Profile</a>
+                    </div>
+                    <img className="card-img-bottom" src={item.image} alt="Card image" />
+            </div> )
+                
         });
         return (
             <div>

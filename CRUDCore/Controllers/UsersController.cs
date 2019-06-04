@@ -32,7 +32,7 @@ public class UsersController : ControllerBase
             {
                 new UserItemViewModel
                 {
-                    Id=1, Email="jon@gg.ss",
+                    Id=1, Email="jon@gg.ss", Image="https://cdn.pixabay.com/photo/2017/07/28/23/34/fantasy-picture-2550222_960_720.jpg",
                     Roles = new List<RoleItemViewModel>
                     {
                         new RoleItemViewModel { Id=2, Name="Admin"}
@@ -40,7 +40,7 @@ public class UsersController : ControllerBase
                 },
                 new UserItemViewModel
                 {
-                    Id=2, Email="bombelyk@gg.ss",
+                    Id=2, Email="bombelyk@gg.ss", Image="https://avatars.mds.yandex.net/get-zen_doc/1362253/pub_5c1f1fbcee97de00aacce7d3_5c1f22b738ad6b00a9ecba7f/scale_600",
                     Roles = new List<RoleItemViewModel>
                     {
                         new RoleItemViewModel { Id=2, Name="Admin"},
