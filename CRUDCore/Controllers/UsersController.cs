@@ -27,7 +27,7 @@ public class UsersController : ControllerBase
     [HttpGet]
     public List<UserItemViewModel> GetUsers()
     {
-       Thread.Sleep(5000);  
+       Thread.Sleep(2000);  
         var model = new List<UserItemViewModel>
             {
                 new UserItemViewModel
