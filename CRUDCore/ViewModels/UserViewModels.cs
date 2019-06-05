@@ -8,9 +8,16 @@ namespace CRUDCore.ViewModels
     public class UserItemViewModel
     {
         public long Id { get; set; }
+
         public string Email { get; set; }
 
         public string Image { get; set; }
+
+        public double Age { get; set; }
+
+        public string Phone { get; set; }
+      
+        public string Description { get; set; }
 
         public IEnumerable<RoleItemViewModel> Roles { get; set; }
 
@@ -18,6 +25,7 @@ namespace CRUDCore.ViewModels
     public class RoleItemViewModel
     {
         public long Id { get; set; }
+
         public string Name { get; set; }
     }
 }

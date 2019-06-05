@@ -11,6 +11,16 @@ namespace CRUDCore.DAL.Entities
     {
         [StringLength(255)]
         public string Image { get; set; }
+
+        [Range(0, 130, ErrorMessage = "Недопустимый год")]
+        public double Age { get; set; }
+
+        [StringLength(255)]
+        public string Phone { get; set; }
+
+        [StringLength(255)]
+        public string Description { get; set; }
+
         public virtual ICollection<DbUserRole> UserRoles { get; set; }
     }
 }

@@ -9,6 +9,8 @@ class AxiosUsers extends Component {
         list: []
     };
 
+    
+
     componentDidMount = () => {
         console.log('---Hello didMount----');
         const url = '/api/users';
@@ -30,17 +32,25 @@ class AxiosUsers extends Component {
     }
 
     render() {
+        const divStyle = {            
+            width: '400px'
+          };
+          const imgStyle = {
+            width: '100%'
+          };
         const { loading, list } = this.state;
         console.log('-----render----', this.state);
         const content = list.map(item => {
             console.log('---Item render---', item);
-            return  ( <div key={item.id} className="card">
+            return  ( <div key={item.id} className="card" style={divStyle}>
                     <div className="card-body">
-                        <h4 className="card-title">{item.email}</h4>
-                        <p className="card-text">Some example text some example text. Jane Doe is an architect and engineer</p>
+                        <h4 className="card-title">Email: {item.email}</h4>
+                        <p className="card-text">Age: {item.age}</p>
+                        <p className="card-text">Phone {item.phone}</p>
+                        <p className="card-text">Description {item.description}</p>
                         <a href="#" className="btn btn-primary">See Profile</a>
                     </div>
-                    <img className="card-img-bottom" src={item.image} alt="Card image" />
+                    <img className="card-img-bottom" src={item.image} alt="Card image" style={imgStyle} />
             </div> )
                 
         });

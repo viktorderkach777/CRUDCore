@@ -4,14 +4,16 @@ using CRUDCore.DAL.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace CRUDCore.Migrations
 {
     [DbContext(typeof(EFContext))]
-    partial class EFContextModelSnapshot : ModelSnapshot
+    [Migration("20190605123427_Add age")]
+    partial class Addage
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -57,9 +59,6 @@ namespace CRUDCore.Migrations
                     b.Property<string>("ConcurrencyStamp")
                         .IsConcurrencyToken();
 
-                    b.Property<string>("Description")
-                        .HasMaxLength(255);
-
                     b.Property<string>("Email")
                         .HasMaxLength(256);
 
@@ -79,9 +78,6 @@ namespace CRUDCore.Migrations
                         .HasMaxLength(256);
 
                     b.Property<string>("PasswordHash");
-
-                    b.Property<string>("Phone")
-                        .HasMaxLength(255);
 
                     b.Property<string>("PhoneNumber");
 

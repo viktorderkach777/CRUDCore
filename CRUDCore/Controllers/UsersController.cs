@@ -28,11 +28,12 @@ public class UsersController : ControllerBase
     public List<UserItemViewModel> GetUsers()
     {
        Thread.Sleep(2000);  
-        var model = new List<UserItemViewModel>
+            var el = _context.Set<DbUser>().FirstOrDefault(s => s.Email == "admin@gmail.com");
+            var model = new List<UserItemViewModel>
             {
                 new UserItemViewModel
                 {
-                    Id=1, Email="jon@gg.ss", Image="https://cdn.pixabay.com/photo/2017/07/28/23/34/fantasy-picture-2550222_960_720.jpg",
+                    Id=1, Email="jon@gg.ss", Image="https://cdn.pixabay.com/photo/2017/07/28/23/34/fantasy-picture-2550222_960_720.jpg", Age=30, Phone="+380957476156", Description="PHP programmer",
                     Roles = new List<RoleItemViewModel>
                     {
                         new RoleItemViewModel { Id=2, Name="Admin"}
@@ -40,7 +41,7 @@ public class UsersController : ControllerBase
                 },
                 new UserItemViewModel
                 {
-                    Id=2, Email="bombelyk@gg.ss", Image="https://avatars.mds.yandex.net/get-zen_doc/1362253/pub_5c1f1fbcee97de00aacce7d3_5c1f22b738ad6b00a9ecba7f/scale_600",
+                    Id=2, Email="bombelyk@gg.ss", Image="https://avatars.mds.yandex.net/get-zen_doc/1362253/pub_5c1f1fbcee97de00aacce7d3_5c1f22b738ad6b00a9ecba7f/scale_600", Age=40, Phone="+380957476999", Description=".NET programmer",
                     Roles = new List<RoleItemViewModel>
                     {
                         new RoleItemViewModel { Id=2, Name="Admin"},
