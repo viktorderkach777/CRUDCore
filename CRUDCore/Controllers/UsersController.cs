@@ -34,7 +34,7 @@ namespace CRUDCore.Controllers
         [HttpGet]
         public List<UserItemViewModel> GetUsers()
         {
-            Thread.Sleep(500);
+            Thread.Sleep(1500);
             var el = _context.Set<DbUser>().FirstOrDefault(s => s.Email == "admin@gmail.com");
             var model = new List<UserItemViewModel>
             {
