@@ -75,6 +75,12 @@ namespace CRUDCore
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
         {
+            // Create DB on startup
+            using (var serviceScope = app.ApplicationServices.GetRequiredService<IServiceScopeFactory>().CreateScope())
+            {
+                serviceScope.ServiceProvider.GetService<EFContext>().Database.Migrate();
+            }
+
             app.UseAuthentication();
 
             if (env.IsDevelopment())
@@ -109,7 +115,9 @@ namespace CRUDCore
                 }
             });
 
-            SeederDB.SeedDataByAS(app.ApplicationServices);
+           
+
+            //SeederDB.SeedDataByAS(app.ApplicationServices);
         }
     }
 }

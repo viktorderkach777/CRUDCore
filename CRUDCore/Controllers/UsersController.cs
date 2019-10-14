@@ -54,6 +54,15 @@ namespace CRUDCore.Controllers
                         new RoleItemViewModel { Id=2, Name="Admin"},
                         new RoleItemViewModel { Id=3, Name="Meson"}
                     }
+                },
+                 new UserItemViewModel
+                {
+                    Id=3, Email="bober@gg.ss", Image="https://cdn1.thr.com/sites/default/files/2019/07/9d2511ab-f495-43d3-977a-774f91421f92.png", Age=28, Phone="+380677476911", Description="Java programmer",
+                    Roles = new List<RoleItemViewModel>
+                    {
+                        new RoleItemViewModel { Id=2, Name="Admin"},
+                        new RoleItemViewModel { Id=3, Name="Meson"}
+                    }
                 }
             };
             return model;
@@ -87,7 +96,7 @@ namespace CRUDCore.Controllers
                         if (!roleresult.Succeeded)
                             throw new Exception("Problem create role");
                     }
-                    throw new Exception("my exception crash");
+                    //throw new Exception("my exception crash");
                     scope.Complete();
                     return Ok(dbUser.Id);
                 }
