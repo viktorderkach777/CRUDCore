@@ -66,7 +66,8 @@ stage('Info') {
                 echo 'Test without Category In Master'                
                 dir("CRUDCore") {
                       sh "ls -la"
-                      sh "docker-compose up -d --build" 
+                      sh "hostname"
+                      //sh "docker-compose up -d --build" 
                    }               
             }
    }
