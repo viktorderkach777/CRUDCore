@@ -9,6 +9,7 @@ environment {
  
       isTriggeredByGit = ''
       //dotnet = '/usr/share/dotnet/dotnet'
+      docker-compose = '/usr/local/bin/docker-compose'
       isTestCategoryLengthEqualsNull=''
 }
 
