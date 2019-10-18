@@ -9,7 +9,8 @@ environment {
  
       isTriggeredByGit = ''
       //dotnet = '/usr/share/dotnet/dotnet'
-      docker-compose = '/usr/local/bin/docker-compose'
+      //docker-compose = '/usr/local/bin/docker-compose'
+      PATH = "$PATH:/usr/local/bin"
       isTestCategoryLengthEqualsNull=''
 }
 
