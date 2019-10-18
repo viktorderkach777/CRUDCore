@@ -67,7 +67,7 @@ stage('Info') {
                 dir("CRUDCore") {
                       sh "ls -la"
                       sh "hostname"
-                      //sh "docker-compose up -d --build" 
+                      sh "docker-compose up -d --build" 
                    }               
             }
    }
