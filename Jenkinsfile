@@ -1,5 +1,5 @@
 pipeline {
-  agent ubuntu 
+  agent { ubuntu } 
  
   parameters {
         string(name: 'TestCategory', defaultValue: '', description: 'Enter the testcategory')
