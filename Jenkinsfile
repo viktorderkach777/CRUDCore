@@ -78,12 +78,12 @@ stage('Info') {
                 echo 'Test without Category In Master'  
                 echo "Build_Number = ${BUILD_NUMBER}"
                 dir("CRUDCore") {
-                      sh "ls -la"
-                      sh "hostname"
-                      sh "docker-compose up -d --build" 
+                    sh "ls -la"
+                    sh "hostname"
+                    sh "docker-compose up -d --build" 
                    } 
                    echo '----docker login-----'
-                  withCredentials([usernamePassword(credentialsId: 'dockerhub', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]){
+                withCredentials([usernamePassword(credentialsId: 'dockerhub', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]){
                     sh """
                     docker login -u $USERNAME -p $PASSWORD
                     """
@@ -92,6 +92,9 @@ stage('Info') {
                     """
                     sh """
                     docker push ${registry}:${BUILD_NUMBER}
+                    """
+                    sh """
+                    docker rmi ${registry}:${BUILD_NUMBER}
                     """
                   }              
             }
