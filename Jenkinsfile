@@ -23,8 +23,7 @@ pipeline {
       isTestCategoryLengthEqualsNull=''
       dockerHubName = "viktorderkach7777/touristapp"
       webserverImageName = "crudcore_web:latest"
-      //registryCredential = 'dockerhub'
-      
+      registryCredential = 'dockerhub'      
   }
 
 stages {  
@@ -84,7 +83,7 @@ stage('Info') {
                     sh "docker-compose up -d --build" 
                    } 
                 echo '----docker login-----'
-                withCredentials([usernamePassword(credentialsId: 'dockerhub', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]){
+                withCredentials([usernamePassword(credentialsId: '${registryCredential}', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]){
                     sh """
                     docker login -u $USERNAME -p $PASSWORD
                     """
