@@ -81,7 +81,13 @@ stage('Info') {
                       sh "ls -la"
                       sh "hostname"
                       sh "docker-compose up -d --build" 
-                   }               
+                   } 
+                   echo '----docker login-----'
+                  withCredentials([usernamePassword(credentialsId: 'dockerhub', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]){
+                    sh """
+                    docker login -u $USERNAME -p $PASSWORD
+                    """
+                  }              
             }
    }
  stage('Test with Category') {
