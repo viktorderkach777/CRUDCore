@@ -21,6 +21,9 @@ pipeline {
       //docker-compose = '/usr/local/bin/docker-compose'
       //PATH = "$PATH:/usr/local/bin"
       isTestCategoryLengthEqualsNull=''
+      registry = "viktorderkach7777/touristapp"
+      registryCredential = 'dockerhub'
+      dockerImage = ''
   }
 
 stages {  
@@ -72,7 +75,8 @@ stage('Info') {
             }
        steps {
                 echo '----NotMasterNotDevNotGitNotParam-----'
-                echo 'Test without Category In Master'                
+                echo 'Test without Category In Master'  
+                echo "Build_Number = ${BUILD_NUMBER}"
                 dir("CRUDCore") {
                       sh "ls -la"
                       sh "hostname"
