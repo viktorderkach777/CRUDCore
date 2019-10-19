@@ -22,7 +22,7 @@ pipeline {
       //PATH = "$PATH:/usr/local/bin"
       isTestCategoryLengthEqualsNull=''
       dockerHubName = "viktorderkach7777/touristapp"
-      webserverImageName = "touristapp:latest"
+      webserverImageName = "crudcore_web:latest"
       //registryCredential = 'dockerhub'
       
   }
