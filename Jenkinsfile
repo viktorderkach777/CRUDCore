@@ -1,18 +1,27 @@
+#!groovy
+//Run docker build
+properties([disableConcurrentBuilds()])
+
 pipeline {
   agent { node { label 'ubuntu' } }
  
   parameters {
         string(name: 'TestCategory', defaultValue: '', description: 'Enter the testcategory')
     }
+  
+  options {
+        buildDiscarder(logRotator(numToKeepStr: '10', artifactNumToKeepStr: '10'))
+        timestamps()
+  }
 
-environment {
+  environment {
  
       isTriggeredByGit = ''
       //dotnet = '/usr/share/dotnet/dotnet'
       //docker-compose = '/usr/local/bin/docker-compose'
       //PATH = "$PATH:/usr/local/bin"
       isTestCategoryLengthEqualsNull=''
-}
+  }
 
 stages {  
 
