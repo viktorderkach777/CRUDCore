@@ -88,6 +88,9 @@ stage('Info') {
                     docker login -u $USERNAME -p $PASSWORD
                     """
                     sh """
+                    docker tag crudcore_web:latest ${registry}:${BUILD_NUMBER}
+                    """
+                    sh """
                     docker push ${registry}:${BUILD_NUMBER}
                     """
                   }              
