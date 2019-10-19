@@ -22,9 +22,7 @@ pipeline {
       //PATH = "$PATH:/usr/local/bin"
       isTestCategoryLengthEqualsNull=''
       dockerHubName = "viktorderkach7777/touristapp"
-      webserverImageName = "crudcore_web:latest"
-      //registryCredential = 'dockerhub'
-      
+      webserverImageName = "crudcore_web:latest"   
   }
 
 stages {  
@@ -45,9 +43,7 @@ steps {
   }
 
 stage('Info') {
-
            steps { 
- 
                   dir("CRUDCore") {
                       sh "ls -la"
                       sh "pwd" 
