@@ -22,8 +22,8 @@ pipeline {
       //PATH = "$PATH:/usr/local/bin"
       isTestCategoryLengthEqualsNull=''
       registry = "viktorderkach7777/touristapp"
-      registryCredential = 'dockerhub'
-      dockerImage = ''
+      //registryCredential = 'dockerhub'
+      
   }
 
 stages {  
@@ -86,6 +86,9 @@ stage('Info') {
                   withCredentials([usernamePassword(credentialsId: 'dockerhub', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]){
                     sh """
                     docker login -u $USERNAME -p $PASSWORD
+                    """
+                    sh """
+                    docker push ${registry}:${BUILD_NUMBER}
                     """
                   }              
             }
