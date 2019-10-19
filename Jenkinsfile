@@ -91,7 +91,16 @@ stage('Info') {
                     docker push ${dockerHubName}:${BUILD_NUMBER}
                     """
                     sh """
+                    docker tag ${dockerHubName}:${BUILD_NUMBER} ${dockerHubName}:latest
+                    """
+                    sh """
+                    docker push ${dockerHubName}:latest
+                    """
+                    sh """
                     docker rmi ${dockerHubName}:${BUILD_NUMBER}
+                    """
+                    sh """
+                    docker rmi ${dockerHubName}:latest
                     """
                   }              
             }
