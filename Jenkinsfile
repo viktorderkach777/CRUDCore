@@ -21,7 +21,8 @@ pipeline {
       //docker-compose = '/usr/local/bin/docker-compose'
       //PATH = "$PATH:/usr/local/bin"
       isTestCategoryLengthEqualsNull=''
-      registry = "viktorderkach7777/touristapp"
+      dockerHubName = "viktorderkach7777/touristapp"
+      webserverImageName = "crudcore_web:latest"
       //registryCredential = 'dockerhub'
       
   }
@@ -82,19 +83,19 @@ stage('Info') {
                     sh "hostname"
                     sh "docker-compose up -d --build" 
                    } 
-                   echo '----docker login-----'
+                echo '----docker login-----'
                 withCredentials([usernamePassword(credentialsId: 'dockerhub', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]){
                     sh """
                     docker login -u $USERNAME -p $PASSWORD
                     """
                     sh """
-                    docker tag crudcore_web:latest ${registry}:${BUILD_NUMBER}
+                    docker tag ${webserverImageName} ${dockerHubName}:${BUILD_NUMBER}
                     """
                     sh """
-                    docker push ${registry}:${BUILD_NUMBER}
+                    docker push ${dockerHubName}:${BUILD_NUMBER}
                     """
                     sh """
-                    docker rmi ${registry}:${BUILD_NUMBER}
+                    docker rmi ${dockerHubName}:${BUILD_NUMBER}
                     """
                   }              
             }
