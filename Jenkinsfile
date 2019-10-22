@@ -3,7 +3,8 @@
 properties([disableConcurrentBuilds()])
 
 pipeline {
-  agent { node { label 'ubuntu' } }
+  //agent { node { label 'ubuntu' } }
+  agent none
  
   parameters {
         string(name: 'TestCategory', defaultValue: '', description: 'Enter the testcategory')
@@ -28,7 +29,7 @@ pipeline {
 stages {  
 
 stage('Checkout') {
-
+agent { node { label 'ubuntu' } }
 steps {
   script {     
                isTriggeredByGit = (currentBuild.getBuildCauses('hudson.model.Cause$UserIdCause')).toString().equals("[]")
@@ -43,6 +44,7 @@ steps {
   }
 
 stage('Info') {
+  agent { node { label 'ubuntu' } }
            steps { 
                   dir("CRUDCore") {
                       sh "ls -la"
@@ -52,7 +54,7 @@ stage('Info') {
     }  
   
   stage('Test without Category In Dev') {
-
+       agent { node { label 'ubuntu' } }
        when {         
                 expression { return (isTriggeredByGit == false && isTestCategoryLengthEqualsNull == true) || (isTriggeredByGit == true && env.BRANCH_NAME == 'dev')}
             }
@@ -66,7 +68,7 @@ stage('Info') {
             }
    }
    stage('Test without Category In Master') {
-
+       agent { node { label 'ubuntu' } }
        when {         
                 expression { return (isTriggeredByGit == false && isTestCategoryLengthEqualsNull == true) || (isTriggeredByGit == true && env.BRANCH_NAME == 'master')}
             }
@@ -106,7 +108,7 @@ stage('Info') {
             }
    }
  stage('Test with Category') {
-
+       agent { node { label 'ubuntu' } }
        when {         
                 expression { return isTriggeredByGit == false && isTestCategoryLengthEqualsNull == false}
             }
@@ -120,7 +122,7 @@ stage('Info') {
             }
    }
  stage('NotMasterNotDevGit') {
-
+       agent { node { label 'ubuntu' } }
        when {              
                 expression { return isTriggeredByGit == true && (env.BRANCH_NAME != 'master' && env.BRANCH_NAME != 'dev')}
             }
