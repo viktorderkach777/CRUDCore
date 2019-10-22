@@ -108,17 +108,19 @@ stage('Info') {
             }
    }
  stage('Test with Category') {
-       agent { node { label 'ubuntu' } }
+       agent { node { label 'homenode' } }
        when {         
                 expression { return isTriggeredByGit == false && isTestCategoryLengthEqualsNull == false}
             }
        steps {
-                echo '----NotMasterNotDevNotGitParam-----'
+                echo '----NotMasterNotDevNotGitParam-----'               
                 dir("CRUDCore") {
-                      sh "ls -la"
-                      sh "pwd" 
+                    sh "ls -la"
+                    sh "hostname"
+                    sh "pwd" 
                       echo "Test with category ${params.TestCategory}"
-                   }   
+                    sh "docker-compose up -d --build" 
+                   }    
             }
    }
  stage('NotMasterNotDevGit') {
