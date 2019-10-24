@@ -136,5 +136,14 @@ stage('Info') {
                 echo '----NotMasterNotDevGit-----'
             }
    } 
+  stage('Clear') {
+        agent { node { label 'ubuntu' } }
+           steps {                            
+             dir("CRUDCore") {
+             sh "ls -la"
+             sh "pwd"                      
+              }
+            }
+    }
 }
 }
