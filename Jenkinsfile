@@ -106,9 +106,9 @@ stage('Info') {
                     """
                   } 
                    sh "mkdir -p Test" 
-                   dir("Test"){
-                   git url: 'https://github.com/viktorderkach777/TestProject.git'
-                   }              
+                   //dir("Test"){
+                   //git url: 'https://github.com/viktorderkach777/TestProject.git'
+                   //}              
             }
    }
  stage('Test with Category') {
