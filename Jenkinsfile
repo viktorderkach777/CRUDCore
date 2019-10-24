@@ -105,13 +105,7 @@ stage('Info') {
                     docker rmi ${dockerHubName}:latest
                     """
                   } 
-                   sh "ls -la"
-                   sh "rm -rf /CRUDCore/" 
-                   sh "ls -la"
-                   sh "mkdir -p Test" 
-                   dir("Test"){
-                   git url: 'https://github.com/viktorderkach777/TestProject.git'
-                   }              
+                              
             }
    }
  stage('Test with Category') {
@@ -127,7 +121,18 @@ stage('Info') {
                     sh "pwd" 
                       echo "Test with category ${params.TestCategory}"
                     sh "docker-compose up -d --build" 
-                   }    
+                   } 
+                   sh "ls -la"
+                   sh "rm -rf /CRUDCore/" 
+                   sh "ls -la"
+                   sh "mkdir -p Test" 
+                   dir("Test"){
+                   git url: 'https://github.com/viktorderkach777/TestProject.git'
+                   dir("awesome-project") {
+                     sh 'dotnet restore'
+                     sh "dotnet test --filter TestCategory=${params.TestCategory}"
+                 }
+                   }      
             }
    }
  stage('NotMasterNotDevGit') {
