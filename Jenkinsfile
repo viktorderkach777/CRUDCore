@@ -132,9 +132,10 @@ stage('Info') {
                       echo '----awesome-project-----'
                       sh "ls -la"
                       sh "pwd" 
-                      echo '----end of awesome-project-----'
-                     //sh 'dotnet restore'
-                     //sh "dotnet test --filter TestCategory=${params.TestCategory}"
+                      
+                     sh 'dotnet restore'
+                     sh "dotnet test --filter TestCategory=${params.TestCategory}"
+                     echo '----end of awesome-project-----'
                  }
                    }      
             }
