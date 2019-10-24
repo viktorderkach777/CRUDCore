@@ -45,11 +45,7 @@ steps {
 
 stage('Info') {
   agent { node { label 'ubuntu' } }
-           steps {
-             sh "mkdir -p Test" 
-             dir("Test"){
-             git url: 'https://github.com/viktorderkach777/TestProject.git'
-             }                 
+           steps {                            
              dir("CRUDCore") {
              sh "ls -la"
              sh "pwd"                      
@@ -108,7 +104,11 @@ stage('Info') {
                     sh """
                     docker rmi ${dockerHubName}:latest
                     """
-                  }              
+                  } 
+                   sh "mkdir -p Test" 
+                   dir("Test"){
+                   git url: 'https://github.com/viktorderkach777/TestProject.git'
+                   }              
             }
    }
  stage('Test with Category') {
