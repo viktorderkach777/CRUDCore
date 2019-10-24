@@ -139,10 +139,10 @@ stage('Info') {
   stage('Clear') {
         agent { node { label 'ubuntu' } }
            steps {                            
-             dir("CRUDCore") {
+             //dir("CRUDCore") {
              sh "ls -la"
              sh "pwd"                      
-              }
+             // }
             }
     }
 }
