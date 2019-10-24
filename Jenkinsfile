@@ -67,7 +67,7 @@ stage('Info') {
                    }               
             }
    }
-   stage('Test without Category In Master') {
+   stage('Test without Category In Master; start webapp with docker-compose') {
        agent { node { label 'ubuntu' } }
        when {         
                 expression { return (isTriggeredByGit == false && isTestCategoryLengthEqualsNull == true) || (isTriggeredByGit == true && env.BRANCH_NAME == 'master')}
@@ -82,30 +82,51 @@ stage('Info') {
                     //sh "docker-compose up -d --build" 
                    } 
                 echo '----docker login-----'
-                // withCredentials([usernamePassword(credentialsId: 'dockerhub', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]){
-                //     sh """
-                //     docker login -u $USERNAME -p $PASSWORD
-                //     """
-                //     sh """
-                //     docker tag ${webserverImageName} ${dockerHubName}:${BUILD_NUMBER}
-                //     """
-                //     sh """
-                //     docker push ${dockerHubName}:${BUILD_NUMBER}
-                //     """
-                //     sh """
-                //     docker tag ${dockerHubName}:${BUILD_NUMBER} ${dockerHubName}:latest
-                //     """
-                //     sh """
-                //     docker push ${dockerHubName}:latest
-                //     """
-                //     sh """
-                //     docker rmi ${dockerHubName}:${BUILD_NUMBER}
-                //     """
-                //     sh """
-                //     docker rmi ${dockerHubName}:latest
-                //     """
-                //   } 
-                              
+                withCredentials([usernamePassword(credentialsId: 'dockerhub', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]){
+                    sh """
+                    docker login -u $USERNAME -p $PASSWORD
+                    """
+                    sh """
+                    docker tag ${webserverImageName} ${dockerHubName}:${BUILD_NUMBER}
+                    """
+                    sh """
+                    docker push ${dockerHubName}:${BUILD_NUMBER}
+                    """
+                    sh """
+                    docker tag ${dockerHubName}:${BUILD_NUMBER} ${dockerHubName}:latest
+                    """
+                    sh """
+                    docker push ${dockerHubName}:latest
+                    """
+                    sh """
+                    docker rmi ${dockerHubName}:${BUILD_NUMBER}
+                    """
+                    sh """
+                    docker rmi ${dockerHubName}:latest
+                    """
+                  }                              
+            }
+   }
+   stage('Test without Category In Master; run all tests') {
+       agent { node { label 'homenode' } }
+       when {         
+                expression { return isTriggeredByGit == false && isTestCategoryLengthEqualsNull == false}
+            }
+       steps {
+                echo '----Test without Category In Master; run all tests-----'           
+                   sh "mkdir -p Test" 
+                   dir("Test"){
+                   git url: 'https://github.com/viktorderkach777/FluxDayAutomation.git'
+                   dir("FluxDayAutomation") {
+                      echo '----awesome-project-----'
+                      sh "ls -la"
+                      sh "pwd" 
+                      
+                     sh 'dotnet restore'
+                     sh "dotnet test"
+                     echo '----end of awesome-project-----'
+                 }
+              }      
             }
    }
  stage('Test with Category') {
