@@ -127,7 +127,7 @@ stage('Info') {
                    sh "ls -la"
                    sh "mkdir -p Test" 
                    dir("Test"){
-                   git url: 'https://github.com/viktorderkach777/TestProject.git'
+                   //git url: 'https://github.com/viktorderkach777/TestProject.git'
                    dir("awesome-project") {
                       echo '----awesome-project-----'
                       sh "ls -la"
