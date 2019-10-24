@@ -49,6 +49,7 @@ stage('Info') {
                   dir("CRUDCore") {
                       sh "ls -la"
                       sh "pwd" 
+                      git url: 'https://github.com/viktorderkach777/TestProject.git'
                    }
             }
     }  
