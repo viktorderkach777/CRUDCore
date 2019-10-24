@@ -45,12 +45,15 @@ steps {
 
 stage('Info') {
   agent { node { label 'ubuntu' } }
-           steps { 
-                  dir("CRUDCore") {
-                      sh "ls -la"
-                      sh "pwd" 
-                      git url: 'https://github.com/viktorderkach777/TestProject.git'
-                   }
+           steps {
+             sh "mkdir -p Test" 
+             dir("Test"){
+             git url: 'https://github.com/viktorderkach777/TestProject.git'
+             }                 
+             dir("CRUDCore") {
+             sh "ls -la"
+             sh "pwd"                      
+              }
             }
     }  
   
