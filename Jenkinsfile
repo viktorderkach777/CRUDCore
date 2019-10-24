@@ -110,7 +110,7 @@ stage('Info') {
    stage('Test without Category In Master; run all tests') {
        agent { node { label 'homenode' } }
        when {         
-                expression { return isTriggeredByGit == false && isTestCategoryLengthEqualsNull == false}
+                expression { return (isTriggeredByGit == false && isTestCategoryLengthEqualsNull == true && env.BRANCH_NAME == 'master') || (isTriggeredByGit == true && env.BRANCH_NAME == 'master')}
             }
        steps {
                 echo '----Test without Category In Master; run all tests-----'           
