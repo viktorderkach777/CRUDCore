@@ -79,32 +79,32 @@ stage('Info') {
                 dir("CRUDCore") {
                     sh "ls -la"
                     sh "hostname"
-                    sh "docker-compose up -d --build" 
+                    //sh "docker-compose up -d --build" 
                    } 
                 echo '----docker login-----'
-                withCredentials([usernamePassword(credentialsId: 'dockerhub', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]){
-                    sh """
-                    docker login -u $USERNAME -p $PASSWORD
-                    """
-                    sh """
-                    docker tag ${webserverImageName} ${dockerHubName}:${BUILD_NUMBER}
-                    """
-                    sh """
-                    docker push ${dockerHubName}:${BUILD_NUMBER}
-                    """
-                    sh """
-                    docker tag ${dockerHubName}:${BUILD_NUMBER} ${dockerHubName}:latest
-                    """
-                    sh """
-                    docker push ${dockerHubName}:latest
-                    """
-                    sh """
-                    docker rmi ${dockerHubName}:${BUILD_NUMBER}
-                    """
-                    sh """
-                    docker rmi ${dockerHubName}:latest
-                    """
-                  } 
+                // withCredentials([usernamePassword(credentialsId: 'dockerhub', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]){
+                //     sh """
+                //     docker login -u $USERNAME -p $PASSWORD
+                //     """
+                //     sh """
+                //     docker tag ${webserverImageName} ${dockerHubName}:${BUILD_NUMBER}
+                //     """
+                //     sh """
+                //     docker push ${dockerHubName}:${BUILD_NUMBER}
+                //     """
+                //     sh """
+                //     docker tag ${dockerHubName}:${BUILD_NUMBER} ${dockerHubName}:latest
+                //     """
+                //     sh """
+                //     docker push ${dockerHubName}:latest
+                //     """
+                //     sh """
+                //     docker rmi ${dockerHubName}:${BUILD_NUMBER}
+                //     """
+                //     sh """
+                //     docker rmi ${dockerHubName}:latest
+                //     """
+                //   } 
                               
             }
    }
