@@ -129,8 +129,12 @@ stage('Info') {
                    dir("Test"){
                    git url: 'https://github.com/viktorderkach777/TestProject.git'
                    dir("awesome-project") {
-                     sh 'dotnet restore'
-                     sh "dotnet test --filter TestCategory=${params.TestCategory}"
+                      echo '----awesome-project-----'
+                      sh "ls -la"
+                      sh "pwd" 
+                      echo '----end of awesome-project-----'
+                     //sh 'dotnet restore'
+                     //sh "dotnet test --filter TestCategory=${params.TestCategory}"
                  }
                    }      
             }
