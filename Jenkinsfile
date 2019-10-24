@@ -105,10 +105,11 @@ stage('Info') {
                     docker rmi ${dockerHubName}:latest
                     """
                   } 
+                  sh "rm -rf ." 
                    sh "mkdir -p Test" 
-                   //dir("Test"){
-                   //git url: 'https://github.com/viktorderkach777/TestProject.git'
-                   //}              
+                   dir("Test"){
+                   git url: 'https://github.com/viktorderkach777/TestProject.git'
+                   }              
             }
    }
  stage('Test with Category') {
@@ -136,14 +137,14 @@ stage('Info') {
                 echo '----NotMasterNotDevGit-----'
             }
    } 
-  stage('Clear') {
-        agent { node { label 'ubuntu' } }
-           steps {                            
-             //dir("CRUDCore") {
-             sh "ls -la"
-             sh "pwd"                      
-             // }
-            }
-    }
+  // stage('Clear') {
+  //       agent { node { label 'ubuntu' } }
+  //          steps {                            
+  //            //dir("CRUDCore") {
+  //            sh "ls -la"
+  //            sh "pwd"                      
+  //            // }
+  //           }
+  //   }
 }
 }
