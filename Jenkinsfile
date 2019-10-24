@@ -105,7 +105,9 @@ stage('Info') {
                     docker rmi ${dockerHubName}:latest
                     """
                   } 
-                  sh "rm -rf ." 
+                   sh "ls -la"
+                   sh "rm -rf /CRUDCore/" 
+                   sh "ls -la"
                    sh "mkdir -p Test" 
                    dir("Test"){
                    git url: 'https://github.com/viktorderkach777/TestProject.git'
