@@ -186,6 +186,14 @@ stage('Info') {
                 echo '----NotMasterNotDevGit-----'
             }
    } 
+
+   post {
+    success {
+        slackSend channel: '#touristapp',
+                  color: 'good',
+                  message: "The pipeline ${currentBuild.fullDisplayName} completed successfully."
+    }
+}
   // stage('Clear') {
   //       agent { node { label 'ubuntu' } }
   //          steps {                            
