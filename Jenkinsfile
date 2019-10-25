@@ -23,7 +23,12 @@ pipeline {
       //PATH = "$PATH:/usr/local/bin"
       isTestCategoryLengthEqualsNull=''
       dockerHubName = "viktorderkach7777/touristapp"
-      webserverImageName = "crudcore_web:latest"   
+      webserverImageName = "crudcore_web:latest"
+      // Slack configuration
+    SLACK_COLOR_DANGER  = '#E01563'
+    SLACK_COLOR_INFO    = '#6ECADC'
+    SLACK_COLOR_WARNING = '#FFC300'
+    SLACK_COLOR_GOOD    = '#3EB991'   
   }
 
 stages {  
@@ -204,9 +209,16 @@ post {
                   message: "The pipeline ${currentBuild.fullDisplayName} completed successfully."
     }
     failure {
-          slackSend channel: '#touristapp',
-                  color: 'bad',
-                  message: "The pipeline ${currentBuild.fullDisplayName} failed."
-       }
+
+      echo "Sending message to Slack"
+      slackSend (color: "${env.SLACK_COLOR_DANGER}",
+                 channel: '#touristapp',
+                 message: "*FAILED:* Job ${env.JOB_NAME} build ${env.BUILD_NUMBER} by ${env.USER_ID}\n More info at: ${env.BUILD_URL}")
+    } // failure
+    // failure {
+    //       slackSend channel: '#touristapp',
+    //               color: 'bad',
+    //               message: "The pipeline ${currentBuild.fullDisplayName} failed."
+    //    }
 }
 }
