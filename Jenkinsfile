@@ -43,34 +43,35 @@ steps {
         }
   }
 
-stage('Info') {
-  agent { node { label 'ubuntu' } }
-           steps {                            
-             dir("CRUDCore") {
-             sh "ls -la"
-             sh "pwd"                      
-              }
-            }
-    }  
+// stage('Info') {
+//   agent { node { label 'ubuntu' } }
+//            steps {                            
+//              dir("CRUDCore") {
+//              sh "ls -la"
+//              sh "pwd"                      
+//               }
+//             }
+//     }  
   
-  stage('Test without Category In Dev') {
-       agent { node { label 'ubuntu' } }
-       when {         
-                expression { return (isTriggeredByGit == false && isTestCategoryLengthEqualsNull == true) || (isTriggeredByGit == true && env.BRANCH_NAME == 'dev')}
-            }
-       steps {
-                echo '----NotMasterNotDevNotGitNotParam-----'
-                echo 'Test without Category In Dev'                 
-                dir("CRUDCore") {
-                      sh "ls -la"
-                      sh "pwd" 
-                   }               
-            }
-   }
-   stage('Test without Category In Master; start webapp in test server with docker-compose') {
+  // stage('Test without Category In Dev') {
+  //      agent { node { label 'ubuntu' } }
+  //      when {         
+  //               expression { return (isTriggeredByGit == false && isTestCategoryLengthEqualsNull == true) || (isTriggeredByGit == true && env.BRANCH_NAME == 'dev')}
+  //           }
+  //      steps {
+  //               echo '----NotMasterNotDevNotGitNotParam-----'
+  //               echo 'Test without Category In Dev'                 
+  //               dir("CRUDCore") {
+  //                     sh "ls -la"
+  //                     sh "pwd" 
+  //                  }               
+  //           }
+  //  }
+   stage('Test without Category in master or dev; start webapp in test server with docker-compose') {
        agent { node { label 'homenode' } }
-       when {         
-                expression { return (isTriggeredByGit == false && isTestCategoryLengthEqualsNull == true) || (isTriggeredByGit == true && env.BRANCH_NAME == 'master')}
+      when {         
+                //expression { return (isTriggeredByGit == false && isTestCategoryLengthEqualsNull == true && (env.BRANCH_NAME == 'master' && env.BRANCH_NAME == 'dev')) || (isTriggeredByGit == true && (env.BRANCH_NAME == 'master' || env.BRANCH_NAME == 'dev'))}
+            expression { return ((isTriggeredByGit == false && isTestCategoryLengthEqualsNull == true ) || isTriggeredByGit == true) && (env.BRANCH_NAME == 'master' || env.BRANCH_NAME == 'dev'))}
             }
        steps {
                 echo '----NotMasterNotDevNotGitNotParam-----'
