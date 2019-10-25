@@ -17,14 +17,14 @@ pipeline {
 
   environment {
  
-      isTriggeredByGit = ''
-      //dotnet = '/usr/share/dotnet/dotnet'
-      //docker-compose = '/usr/local/bin/docker-compose'
-      //PATH = "$PATH:/usr/local/bin"
-      isTestCategoryLengthEqualsNull=''
-      dockerHubName = "viktorderkach7777/touristapp"
-      webserverImageName = "crudcore_web:latest"
-      // Slack configuration
+    IS_TRIGGERED_BY_GIT = ''
+    //dotnet = '/usr/share/dotnet/dotnet'
+    //docker-compose = '/usr/local/bin/docker-compose'
+    //PATH = "$PATH:/usr/local/bin"
+    IS_TEST_CATEGORY_LENGTH_EQUALS_NULL=''
+    DOCKER_HUB_NAME = "viktorderkach7777/touristapp"
+    WEB_SERVER_IMAGE_NAME = "crudcore_web:latest"
+    // Slack configuration
     SLACK_CHANNEL = '#touristapp'
     SLACK_COLOR_DANGER  = '#E01563'
     SLACK_COLOR_INFO    = '#6ECADC'
@@ -38,14 +38,14 @@ stage('Checkout') {
 agent { node { label 'ubuntu' } }
 steps {
   script {     
-               isTriggeredByGit = (currentBuild.getBuildCauses('hudson.model.Cause$UserIdCause')).toString().equals("[]")
-               isTestCategoryLengthEqualsNull = (params.TestCategory).trim().length() == 0
+               IS_TRIGGERED_BY_GIT = (currentBuild.getBuildCauses('hudson.model.Cause$UserIdCause')).toString().equals("[]")
+               IS_TEST_CATEGORY_LENGTH_EQUALS_NULL = (params.TestCategory).trim().length() == 0
           }    
   
        //checkout scm
        echo "TestCategory = ${params.TestCategory}"       
-       echo "isTriggeredByGit = ${isTriggeredByGit}"      
-       echo "isTestCategoryLengthEqualsNull = ${isTestCategoryLengthEqualsNull}"
+       echo "IS_TRIGGERED_BY_GIT = ${IS_TRIGGERED_BY_GIT}"      
+       echo "IS_TEST_CATEGORY_LENGTH_EQUALS_NULL = ${IS_TEST_CATEGORY_LENGTH_EQUALS_NULL}"
         }
   }
 
@@ -62,7 +62,7 @@ steps {
   // stage('Test without Category In Dev') {
   //      agent { node { label 'ubuntu' } }
   //      when {         
-  //               expression { return (isTriggeredByGit == false && isTestCategoryLengthEqualsNull == true) || (isTriggeredByGit == true && env.BRANCH_NAME == 'dev')}
+  //               expression { return (IS_TRIGGERED_BY_GIT == false && IS_TEST_CATEGORY_LENGTH_EQUALS_NULL == true) || (IS_TRIGGERED_BY_GIT == true && env.BRANCH_NAME == 'dev')}
   //           }
   //      steps {
   //               echo '----NotMasterNotDevNotGitNotParam-----'
@@ -76,8 +76,8 @@ steps {
    stage('Test without Category in master or dev; start webapp in test server with docker-compose') {
        agent { node { label 'homenode' } }
       when {         
-                //expression { return (isTriggeredByGit == false && isTestCategoryLengthEqualsNull == true && (env.BRANCH_NAME == 'master' && env.BRANCH_NAME == 'dev')) || (isTriggeredByGit == true && (env.BRANCH_NAME == 'master' || env.BRANCH_NAME == 'dev'))}
-            expression { return ((isTriggeredByGit == false && isTestCategoryLengthEqualsNull == true ) || isTriggeredByGit == true) && (env.BRANCH_NAME == 'master' || env.BRANCH_NAME == 'dev')}
+                //expression { return (IS_TRIGGERED_BY_GIT == false && IS_TEST_CATEGORY_LENGTH_EQUALS_NULL == true && (env.BRANCH_NAME == 'master' && env.BRANCH_NAME == 'dev')) || (IS_TRIGGERED_BY_GIT == true && (env.BRANCH_NAME == 'master' || env.BRANCH_NAME == 'dev'))}
+            expression { return ((IS_TRIGGERED_BY_GIT == false && IS_TEST_CATEGORY_LENGTH_EQUALS_NULL == true ) || IS_TRIGGERED_BY_GIT == true) && (env.BRANCH_NAME == 'master' || env.BRANCH_NAME == 'dev')}
             }
        steps {
                 echo '----NotMasterNotDevNotGitNotParam-----'
@@ -93,7 +93,7 @@ steps {
     stage('Test without Category In Master; run all tests') {
        agent { node { label 'homenode' } }
        when {         
-                expression { return (isTriggeredByGit == false && isTestCategoryLengthEqualsNull == true && env.BRANCH_NAME == 'master') || (isTriggeredByGit == true && env.BRANCH_NAME == 'master')}
+                expression { return (IS_TRIGGERED_BY_GIT == false && IS_TEST_CATEGORY_LENGTH_EQUALS_NULL == true && env.BRANCH_NAME == 'master') || (IS_TRIGGERED_BY_GIT == true && env.BRANCH_NAME == 'master')}
             }
        steps {
                 echo '----Test without Category In Master; run all tests-----'           
@@ -115,7 +115,7 @@ steps {
    stage('Test without Category In Master; start webapp with docker-compose') {
        agent { node { label 'ubuntu' } }
        when {         
-                expression { return (isTriggeredByGit == false && isTestCategoryLengthEqualsNull == true) || (isTriggeredByGit == true && env.BRANCH_NAME == 'master')}
+                expression { return (IS_TRIGGERED_BY_GIT == false && IS_TEST_CATEGORY_LENGTH_EQUALS_NULL == true) || (IS_TRIGGERED_BY_GIT == true && env.BRANCH_NAME == 'master')}
             }
        steps {
                 echo '----NotMasterNotDevNotGitNotParam-----'
@@ -132,22 +132,22 @@ steps {
                     docker login -u $USERNAME -p $PASSWORD
                     """
                     sh """
-                    docker tag ${webserverImageName} ${dockerHubName}:${BUILD_NUMBER}
+                    docker tag ${WEB_SERVER_IMAGE_NAME} ${DOCKER_HUB_NAME}:${BUILD_NUMBER}
                     """
                     sh """
-                    docker push ${dockerHubName}:${BUILD_NUMBER}
+                    docker push ${DOCKER_HUB_NAME}:${BUILD_NUMBER}
                     """
                     sh """
-                    docker tag ${dockerHubName}:${BUILD_NUMBER} ${dockerHubName}:latest
+                    docker tag ${DOCKER_HUB_NAME}:${BUILD_NUMBER} ${DOCKER_HUB_NAME}:latest
                     """
                     sh """
-                    docker push ${dockerHubName}:latest
+                    docker push ${DOCKER_HUB_NAME}:latest
                     """
                     sh """
-                    docker rmi ${dockerHubName}:${BUILD_NUMBER}
+                    docker rmi ${DOCKER_HUB_NAME}:${BUILD_NUMBER}
                     """
                     sh """
-                    docker rmi ${dockerHubName}:latest
+                    docker rmi ${DOCKER_HUB_NAME}:latest
                     """
                   }                              
             }
@@ -155,7 +155,7 @@ steps {
  stage('Test with Category') {
        agent { node { label 'homenode' } }
        when {         
-                expression { return isTriggeredByGit == false && isTestCategoryLengthEqualsNull == false}
+                expression { return IS_TRIGGERED_BY_GIT == false && IS_TEST_CATEGORY_LENGTH_EQUALS_NULL == false}
             }
        steps {
                 echo '----NotMasterNotDevNotGitParam-----'               
@@ -187,7 +187,7 @@ steps {
  stage('NotMasterNotDevGit') {
        agent { node { label 'ubuntu' } }
        when {              
-                expression { return isTriggeredByGit == true && (env.BRANCH_NAME != 'master' && env.BRANCH_NAME != 'dev')}
+                expression { return IS_TRIGGERED_BY_GIT == true && (env.BRANCH_NAME != 'master' && env.BRANCH_NAME != 'dev')}
             }
        steps {
                 echo '----NotMasterNotDevGit-----'
@@ -220,7 +220,7 @@ post {
       echo "Sending message to Slack"
       slackSend (color: "${env.SLACK_COLOR_GOOD}",
                  channel: "${env.SLACK_CHANNEL}",
-                 message: "*SUCCESS:* Job ${env.JOB_NAME} build ${env.BUILD_NUMBER}")
+                 message: "*SUCCESS:* Job ${env.JOB_NAME} build ${env.BUILD_NUMBER} by ${env.USER_ID} - ${env.BUILD_USER} - ${env.BUILD_USER_ID}")
     } // success
     failure {
 
