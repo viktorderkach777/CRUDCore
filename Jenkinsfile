@@ -71,7 +71,7 @@ steps {
        agent { node { label 'homenode' } }
       when {         
                 //expression { return (isTriggeredByGit == false && isTestCategoryLengthEqualsNull == true && (env.BRANCH_NAME == 'master' && env.BRANCH_NAME == 'dev')) || (isTriggeredByGit == true && (env.BRANCH_NAME == 'master' || env.BRANCH_NAME == 'dev'))}
-            expression { return ((isTriggeredByGit == false && isTestCategoryLengthEqualsNull == true ) || isTriggeredByGit == true) && (env.BRANCH_NAME == 'master' || env.BRANCH_NAME == 'dev'))}
+            expression { return ((isTriggeredByGit == false && isTestCategoryLengthEqualsNull == true ) || isTriggeredByGit == true) && (env.BRANCH_NAME == 'master' || env.BRANCH_NAME == 'dev')}
             }
        steps {
                 echo '----NotMasterNotDevNotGitNotParam-----'
