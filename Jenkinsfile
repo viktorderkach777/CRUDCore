@@ -203,11 +203,17 @@ steps {
   //   }
 }
 post {
+    // success {
+    //     slackSend channel: '#touristapp',
+    //               color: 'good',
+    //               message: "The pipeline ${currentBuild.fullDisplayName} completed successfully."
+    // }
     success {
-        slackSend channel: '#touristapp',
-                  color: 'good',
-                  message: "The pipeline ${currentBuild.fullDisplayName} completed successfully."
-    }
+      echo "Sending message to Slack"
+      slackSend (color: "${env.SLACK_COLOR_GOOD}",
+                 channel: '#touristapp',
+                 message: "*SUCCESS:* Job ${env.JOB_NAME} build ${env.BUILD_NUMBER} by ${env.USER_ID}\n More info at: ${env.BUILD_URL}")
+    } // success
     failure {
 
       echo "Sending message to Slack"
