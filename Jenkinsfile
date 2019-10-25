@@ -67,6 +67,44 @@ stage('Info') {
                    }               
             }
    }
+   stage('Test without Category In Master; start webapp in test server with docker-compose') {
+       agent { node { label 'homenode' } }
+       when {         
+                expression { return (isTriggeredByGit == false && isTestCategoryLengthEqualsNull == true) || (isTriggeredByGit == true && env.BRANCH_NAME == 'master')}
+            }
+       steps {
+                echo '----NotMasterNotDevNotGitNotParam-----'
+                echo 'Test without Category In Master'  
+                echo "Build_Number = ${BUILD_NUMBER}"
+                dir("CRUDCore") {
+                    sh "ls -la"
+                    sh "hostname"
+                    sh "docker-compose up -d --build" 
+                   }                                       
+            }
+   }
+    stage('Test without Category In Master; run all tests') {
+       agent { node { label 'homenode' } }
+       when {         
+                expression { return (isTriggeredByGit == false && isTestCategoryLengthEqualsNull == true && env.BRANCH_NAME == 'master') || (isTriggeredByGit == true && env.BRANCH_NAME == 'master')}
+            }
+       steps {
+                echo '----Test without Category In Master; run all tests-----'           
+                   sh "mkdir -p Test" 
+                   dir("Test"){
+                   git url: 'https://github.com/viktorderkach777/FluxDayAutomation.git'
+                   dir("FluxDayAutomation") {
+                      echo '----awesome-project-----'
+                      sh "ls -la"
+                      sh "pwd" 
+                      
+                     sh 'dotnet restore'
+                     sh "dotnet test"
+                     echo '----end of awesome-project-----'
+                 }
+              }      
+            }
+   }
    stage('Test without Category In Master; start webapp with docker-compose') {
        agent { node { label 'ubuntu' } }
        when {         
@@ -106,29 +144,7 @@ stage('Info') {
                     """
                   }                              
             }
-   }
-   stage('Test without Category In Master; run all tests') {
-       agent { node { label 'homenode' } }
-       when {         
-                expression { return (isTriggeredByGit == false && isTestCategoryLengthEqualsNull == true && env.BRANCH_NAME == 'master') || (isTriggeredByGit == true && env.BRANCH_NAME == 'master')}
-            }
-       steps {
-                echo '----Test without Category In Master; run all tests-----'           
-                   sh "mkdir -p Test" 
-                   dir("Test"){
-                   git url: 'https://github.com/viktorderkach777/FluxDayAutomation.git'
-                   dir("FluxDayAutomation") {
-                      echo '----awesome-project-----'
-                      sh "ls -la"
-                      sh "pwd" 
-                      
-                     sh 'dotnet restore'
-                     sh "dotnet test"
-                     echo '----end of awesome-project-----'
-                 }
-              }      
-            }
-   }
+   }  
  stage('Test with Category') {
        agent { node { label 'homenode' } }
        when {         
