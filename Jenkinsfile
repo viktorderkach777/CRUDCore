@@ -1,29 +1,24 @@
 #!groovy
-//Run docker build
-properties([disableConcurrentBuilds()])
 
-pipeline {
-  //agent { node { label 'ubuntu' } }
-  agent none
- 
+properties([disableConcurrentBuilds()])
+pipeline {  
+  agent none 
   parameters {
         string(name: 'TestCategory', defaultValue: '', description: 'Enter the testcategory')
-    }
-  
+  }  
   options {
         buildDiscarder(logRotator(numToKeepStr: '10', artifactNumToKeepStr: '10'))
         timestamps()
   }
-
-  environment {
- 
+  environment { 
     IS_TRIGGERED_BY_GIT = ''
     //dotnet = '/usr/share/dotnet/dotnet'
     //docker-compose = '/usr/local/bin/docker-compose'
     //PATH = "$PATH:/usr/local/bin"
     IS_TEST_CATEGORY_LENGTH_EQUALS_NULL=''
-    DOCKER_HUB_NAME = "viktorderkach7777/touristapp"
-    WEB_SERVER_IMAGE_NAME = "crudcore_web:latest"
+    DOCKER_HUB_NAME = 'viktorderkach7777/touristapp'
+    WEB_SERVER_IMAGE_NAME = 'crudcore_web:latest'
+    TEST_GIT_URL = 'https://github.com/viktorderkach777/FluxDayAutomation.git'
     // Slack configuration
     SLACK_CHANNEL = '#touristapp'
     SLACK_COLOR_DANGER  = '#E01563'
@@ -32,52 +27,22 @@ pipeline {
     SLACK_COLOR_GOOD    = '#3EB991'   
   }
 
-stages {  
-
-stage('Checkout') {
-agent { node { label 'ubuntu' } }
-steps {
-  script {     
+stages {
+    stage('Checkout') {
+       agent { node { label 'ubuntu' } }
+       steps {
+       script {     
                IS_TRIGGERED_BY_GIT = (currentBuild.getBuildCauses('hudson.model.Cause$UserIdCause')).toString().equals("[]")
                IS_TEST_CATEGORY_LENGTH_EQUALS_NULL = (params.TestCategory).trim().length() == 0
-          }    
-  
-       //checkout scm
-       echo "TestCategory = ${params.TestCategory}"       
-       echo "IS_TRIGGERED_BY_GIT = ${IS_TRIGGERED_BY_GIT}"      
-       echo "IS_TEST_CATEGORY_LENGTH_EQUALS_NULL = ${IS_TEST_CATEGORY_LENGTH_EQUALS_NULL}"
+          }       
+          echo "TestCategory = ${params.TestCategory}"       
+          echo "IS_TRIGGERED_BY_GIT = ${IS_TRIGGERED_BY_GIT}"      
+          echo "IS_TEST_CATEGORY_LENGTH_EQUALS_NULL = ${IS_TEST_CATEGORY_LENGTH_EQUALS_NULL}"
         }
-  }
-
-// stage('Info') {
-//   agent { node { label 'ubuntu' } }
-//            steps {                            
-//              dir("CRUDCore") {
-//              sh "ls -la"
-//              sh "pwd"                      
-//               }
-//             }
-//     }  
-  
-  // stage('Test without Category In Dev') {
-  //      agent { node { label 'ubuntu' } }
-  //      when {         
-  //               expression { return (IS_TRIGGERED_BY_GIT == false && IS_TEST_CATEGORY_LENGTH_EQUALS_NULL == true) || (IS_TRIGGERED_BY_GIT == true && env.BRANCH_NAME == 'dev')}
-  //           }
-  //      steps {
-  //               echo '----NotMasterNotDevNotGitNotParam-----'
-  //               echo 'Test without Category In Dev'                 
-  //               dir("CRUDCore") {
-  //                     sh "ls -la"
-  //                     sh "pwd" 
-  //                  }               
-  //           }
-  //  }
+   }
    stage('Test without Category; start webapp in test server with docker-compose') {
        agent { node { label 'homenode' } }
-      when {         
-                //expression { return (IS_TRIGGERED_BY_GIT == false && IS_TEST_CATEGORY_LENGTH_EQUALS_NULL == true && (env.BRANCH_NAME == 'master' && env.BRANCH_NAME == 'dev')) || (IS_TRIGGERED_BY_GIT == true && (env.BRANCH_NAME == 'master' || env.BRANCH_NAME == 'dev'))}
-            //expression { return ((IS_TRIGGERED_BY_GIT == false && IS_TEST_CATEGORY_LENGTH_EQUALS_NULL == true ) || IS_TRIGGERED_BY_GIT == true) && (env.BRANCH_NAME == 'master' || env.BRANCH_NAME == 'dev')}
+       when {           
             expression { return (IS_TRIGGERED_BY_GIT == false && IS_TEST_CATEGORY_LENGTH_EQUALS_NULL == true) || (IS_TRIGGERED_BY_GIT == true && (env.BRANCH_NAME == 'master' || env.BRANCH_NAME == 'dev'))}
             }
        steps {
@@ -92,16 +57,14 @@ steps {
    }
     stage('Test without Category; run all tests in test server') {
        agent { node { label 'homenode' } }
-       when {         
-                //expression { return (IS_TRIGGERED_BY_GIT == false && IS_TEST_CATEGORY_LENGTH_EQUALS_NULL == true && env.BRANCH_NAME == 'master') || (IS_TRIGGERED_BY_GIT == true && env.BRANCH_NAME == 'master')}
-                //expression { return ((IS_TRIGGERED_BY_GIT == false && IS_TEST_CATEGORY_LENGTH_EQUALS_NULL == true ) || IS_TRIGGERED_BY_GIT == true) && (env.BRANCH_NAME == 'master' || env.BRANCH_NAME == 'dev')}
+       when {                
                 expression { return (IS_TRIGGERED_BY_GIT == false && IS_TEST_CATEGORY_LENGTH_EQUALS_NULL == true) || (IS_TRIGGERED_BY_GIT == true && (env.BRANCH_NAME == 'master' || env.BRANCH_NAME == 'dev'))}
             }
        steps {
                 echo '----Test without Category in master or dev; run all tests in test server-----'           
                    sh "mkdir -p Test" 
                    dir("Test"){
-                   git url: 'https://github.com/viktorderkach777/FluxDayAutomation.git'
+                   git url: "${env.TEST_GIT_URL}"
                    dir("FluxDayAutomation") {                  
                      sh 'dotnet restore'
                      sh "dotnet test"                     
@@ -120,8 +83,16 @@ steps {
                     sh "ls -la"
                     sh "hostname"
                     sh "docker-compose up -d --build" 
-                   } 
-                echo '----docker login-----'
+                   }                                            
+            }
+   } 
+   stage('Test without Category In Master; pushing of the docker image') {
+       agent { node { label 'ubuntu' } }
+       when {         
+                expression { return ((IS_TRIGGERED_BY_GIT == false && IS_TEST_CATEGORY_LENGTH_EQUALS_NULL == true) || IS_TRIGGERED_BY_GIT == true) && env.BRANCH_NAME == 'master'}
+            }
+       steps {                             
+                echo '----Test without Category In Master; pushing of the docker image-----'
                 withCredentials([usernamePassword(credentialsId: 'dockerhub', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]){
                     sh """
                     docker login -u $USERNAME -p $PASSWORD
@@ -146,39 +117,7 @@ steps {
                     """
                   }                              
             }
-   }  
-//  stage('Test with Category') {
-//        agent { node { label 'homenode' } }
-//        when {         
-//                 expression { return IS_TRIGGERED_BY_GIT == false && IS_TEST_CATEGORY_LENGTH_EQUALS_NULL == false}
-//             }
-//        steps {
-//                 echo '----NotMasterNotDevNotGitParam-----'               
-//                 dir("CRUDCore") {
-//                     sh "ls -la"
-//                     sh "hostname"
-//                     sh "pwd" 
-//                       echo "Test with category ${params.TestCategory}"
-//                     sh "docker-compose up -d --build" 
-//                    } 
-//                    sh "ls -la"
-//                    sh "rm -rf /CRUDCore/" 
-//                    sh "ls -la"
-//                    sh "mkdir -p Test" 
-//                    dir("Test"){
-//                    git url: 'https://github.com/viktorderkach777/FluxDayAutomation.git'
-//                    dir("FluxDayAutomation") {
-//                       echo '----awesome-project-----'
-//                       sh "ls -la"
-//                       sh "pwd" 
-                      
-//                      sh 'dotnet restore'
-//                      sh "dotnet test --filter TestCategory=${params.TestCategory}"
-//                      echo '----end of awesome-project-----'
-//                  }
-//                    }      
-//             }
-//    }
+   }
    stage('Test with Category') {
        agent { node { label 'homenode' } }
        when {         
@@ -186,49 +125,20 @@ steps {
             }
        steps {
                 echo '----Test with Category-----'               
-                // dir("CRUDCore") {
-                //     sh "ls -la"
-                //     sh "hostname"
-                //     sh "pwd" 
-                //       echo "Test with category ${params.TestCategory}"
-                //     sh "docker-compose up -d --build" 
-                //    } 
-                   sh "ls -la"
-                   sh "rm -rf /CRUDCore/" 
-                   sh "ls -la"
                    sh "mkdir -p Test" 
                    dir("Test"){
-                   git url: 'https://github.com/viktorderkach777/FluxDayAutomation.git'
+                   git url: "${env.TEST_GIT_URL}"
                    dir("FluxDayAutomation") {
-                      echo '----awesome-project-----'
+                      echo '----FluxDayAutomation-----'
                       sh "ls -la"
-                      sh "pwd" 
-                      
-                     sh 'dotnet restore'
-                     sh "dotnet test --filter TestCategory=${params.TestCategory}"
-                     echo '----end of awesome-project-----'
+                      sh "pwd"                      
+                      sh 'dotnet restore'
+                      sh "dotnet test --filter TestCategory=${params.TestCategory}"
+                      echo '----end FluxDayAutomation-----'
                  }
-                   }      
-            }
+              }      
+        }
    }
-//  stage('NotMasterNotDevGit') {
-//        agent { node { label 'ubuntu' } }
-//        when {              
-//                 expression { return IS_TRIGGERED_BY_GIT == true && (env.BRANCH_NAME != 'master' && env.BRANCH_NAME != 'dev')}
-//             }
-//        steps {
-//                 echo '----NotMasterNotDevGit-----'
-//             }
-//    }   
-  // stage('Clear') {
-  //       agent { node { label 'ubuntu' } }
-  //          steps {                            
-  //            //dir("CRUDCore") {
-  //            sh "ls -la"
-  //            sh "pwd"                      
-  //            // }
-  //           }
-  //   }
 }
 post {
     // success {
@@ -236,30 +146,30 @@ post {
     //               color: 'good',
     //               message: "The pipeline ${currentBuild.fullDisplayName} completed successfully."
     // }
+    // failure {
+    //       slackSend channel: '#touristapp',
+    //               color: 'danger',
+    //               message: "The pipeline ${currentBuild.fullDisplayName} failed."
+    //    }
+
     aborted {
       echo "Sending message to Slack"
       slackSend (color: "${env.SLACK_COLOR_WARNING}",
                  channel: "${env.SLACK_CHANNEL}",
                  message: "*ABORTED:* Job ${env.JOB_NAME} build ${env.BUILD_NUMBER}")
-    } // aborted
+    } 
 
     success {
       echo "Sending message to Slack"
       slackSend (color: "${env.SLACK_COLOR_GOOD}",
                  channel: "${env.SLACK_CHANNEL}",
                  message: "*SUCCESS:* Job ${env.JOB_NAME} build ${env.BUILD_NUMBER}")
-    } // success
+    } 
     failure {
-
       echo "Sending message to Slack"
       slackSend (color: "${env.SLACK_COLOR_DANGER}",
                  channel: "${env.SLACK_CHANNEL}",
                  message: "*FAILED:* Job ${env.JOB_NAME} build ${env.BUILD_NUMBER}")
-    } // failure
-    // failure {
-    //       slackSend channel: '#touristapp',
-    //               color: 'bad',
-    //               message: "The pipeline ${currentBuild.fullDisplayName} failed."
-    //    }
-}
+    }    
+  }
 }
