@@ -31,6 +31,8 @@ stages {
     stage('Checkout') {
        agent { node { label 'ubuntu' } }
        steps {
+         // get user that has started the build
+       wrap([$class: 'BuildUser']) { script { env.USER_ID = "${BUILD_USER_ID}" } }
        script {     
                IS_TRIGGERED_BY_GIT = (currentBuild.getBuildCauses('hudson.model.Cause$UserIdCause')).toString().equals("[]")
                IS_TEST_CATEGORY_LENGTH_EQUALS_NULL = (params.TestCategory).trim().length() == 0
@@ -163,7 +165,7 @@ post {
       echo "Sending message to Slack"
       slackSend (color: "${env.SLACK_COLOR_GOOD}",
                  channel: "${env.SLACK_CHANNEL}",
-                 message: "*SUCCESS:* Job ${env.JOB_NAME} build ${env.BUILD_NUMBER}")
+                 message: "*SUCCESS:* Job ${env.JOB_NAME} build ${env.BUILD_NUMBER} by ${env.USER_ID}")
     } 
     failure {
       echo "Sending message to Slack"
