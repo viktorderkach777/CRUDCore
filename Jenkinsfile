@@ -67,23 +67,46 @@ stage('Info') {
                    }               
             }
    }
-   stage('Test without Category In Master; test server') {
-       agent { node { label 'homenode' } }
+   stage('Test without Category In Master; start webapp with docker-compose') {
+       agent { node { label 'ubuntu' } }
        when {         
-                expression { return (isTriggeredByGit == false && isTestCategoryLengthEqualsNull == true && env.BRANCH_NAME == 'master') || (isTriggeredByGit == true && env.BRANCH_NAME == 'master')}
+                expression { return (isTriggeredByGit == false && isTestCategoryLengthEqualsNull == true) || (isTriggeredByGit == true && env.BRANCH_NAME == 'master')}
             }
        steps {
-                echo '----Test without Category In Master; test server -----'           
-                   echo 'Test without Category In Master'  
+                echo '----NotMasterNotDevNotGitNotParam-----'
+                echo 'Test without Category In Master'  
                 echo "Build_Number = ${BUILD_NUMBER}"
                 dir("CRUDCore") {
                     sh "ls -la"
                     sh "hostname"
                     sh "docker-compose up -d --build" 
                    } 
-              }      
+                echo '----docker login-----'
+                withCredentials([usernamePassword(credentialsId: 'dockerhub', usernameVariable: 'USERNAME', passwordVariable: 'PASSWORD')]){
+                    sh """
+                    docker login -u $USERNAME -p $PASSWORD
+                    """
+                    sh """
+                    docker tag ${webserverImageName} ${dockerHubName}:${BUILD_NUMBER}
+                    """
+                    sh """
+                    docker push ${dockerHubName}:${BUILD_NUMBER}
+                    """
+                    sh """
+                    docker tag ${dockerHubName}:${BUILD_NUMBER} ${dockerHubName}:latest
+                    """
+                    sh """
+                    docker push ${dockerHubName}:latest
+                    """
+                    sh """
+                    docker rmi ${dockerHubName}:${BUILD_NUMBER}
+                    """
+                    sh """
+                    docker rmi ${dockerHubName}:latest
+                    """
+                  }                              
             }
-   //}   
+   }
    stage('Test without Category In Master; run all tests') {
        agent { node { label 'homenode' } }
        when {         
@@ -105,8 +128,7 @@ stage('Info') {
                  }
               }      
             }
-   //}
-   
+   }
  stage('Test with Category') {
        agent { node { label 'homenode' } }
        when {         
@@ -138,7 +160,7 @@ stage('Info') {
                  }
                    }      
             }
-   //}
+   }
  stage('NotMasterNotDevGit') {
        agent { node { label 'ubuntu' } }
        when {              
