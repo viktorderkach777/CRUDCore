@@ -28,11 +28,19 @@ pipeline {
   }
 
 stages {
+  stage('build user') {
+      agent { node { label 'ubuntu' } }
+      steps {
+        wrap([$class: 'BuildUser']) {
+          sh 'echo "${BUILD_USER}"'
+        }
+      }
+    }
     stage('Checkout') {
        agent { node { label 'ubuntu' } }
        steps {
          // get user that has started the build
-       wrap([$class: 'BuildUser']) { script { env.USER_ID = "${BUILD_USER_ID}" } }
+       //wrap([$class: 'BuildUser']) { script { env.USER_ID = "${BUILD_USER_ID}" } }
        script {     
                IS_TRIGGERED_BY_GIT = (currentBuild.getBuildCauses('hudson.model.Cause$UserIdCause')).toString().equals("[]")
                IS_TEST_CATEGORY_LENGTH_EQUALS_NULL = (params.TestCategory).trim().length() == 0
