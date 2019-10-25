@@ -25,6 +25,7 @@ pipeline {
       dockerHubName = "viktorderkach7777/touristapp"
       webserverImageName = "crudcore_web:latest"
       // Slack configuration
+    SLACK_CHANNEL = '#touristapp'
     SLACK_COLOR_DANGER  = '#E01563'
     SLACK_COLOR_INFO    = '#6ECADC'
     SLACK_COLOR_WARNING = '#FFC300'
@@ -208,18 +209,25 @@ post {
     //               color: 'good',
     //               message: "The pipeline ${currentBuild.fullDisplayName} completed successfully."
     // }
+    aborted {
+      echo "Sending message to Slack"
+      slackSend (color: "${env.SLACK_COLOR_WARNING}",
+                 channel: "${env.SLACK_CHANNEL}",
+                 message: "*ABORTED:* Job ${env.JOB_NAME} build ${env.BUILD_NUMBER}")
+    } // aborted
+
     success {
       echo "Sending message to Slack"
       slackSend (color: "${env.SLACK_COLOR_GOOD}",
-                 channel: '#touristapp',
-                 message: "*SUCCESS:* Job ${env.JOB_NAME} build ${env.BUILD_NUMBER} by ${env.USER_ID}\n More info at: ${env.BUILD_URL}")
+                 channel: "${env.SLACK_CHANNEL}",
+                 message: "*SUCCESS:* Job ${env.JOB_NAME} build ${env.BUILD_NUMBER}")
     } // success
     failure {
 
       echo "Sending message to Slack"
       slackSend (color: "${env.SLACK_COLOR_DANGER}",
-                 channel: '#touristapp',
-                 message: "*FAILED:* Job ${env.JOB_NAME} build ${env.BUILD_NUMBER} by ${env.USER_ID}\n More info at: ${env.BUILD_URL}")
+                 channel: "${env.SLACK_CHANNEL}",
+                 message: "*FAILED:* Job ${env.JOB_NAME} build ${env.BUILD_NUMBER}")
     } // failure
     // failure {
     //       slackSend channel: '#touristapp',
