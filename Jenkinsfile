@@ -73,16 +73,16 @@ steps {
   //                  }               
   //           }
   //  }
-   stage('Test without Category in master or dev; start webapp in test server with docker-compose') {
+   stage('Test without Category; start webapp in test server with docker-compose') {
        agent { node { label 'homenode' } }
       when {         
                 //expression { return (IS_TRIGGERED_BY_GIT == false && IS_TEST_CATEGORY_LENGTH_EQUALS_NULL == true && (env.BRANCH_NAME == 'master' && env.BRANCH_NAME == 'dev')) || (IS_TRIGGERED_BY_GIT == true && (env.BRANCH_NAME == 'master' || env.BRANCH_NAME == 'dev'))}
-            expression { return ((IS_TRIGGERED_BY_GIT == false && IS_TEST_CATEGORY_LENGTH_EQUALS_NULL == true ) || IS_TRIGGERED_BY_GIT == true) && (env.BRANCH_NAME == 'master' || env.BRANCH_NAME == 'dev')}
+            //expression { return ((IS_TRIGGERED_BY_GIT == false && IS_TEST_CATEGORY_LENGTH_EQUALS_NULL == true ) || IS_TRIGGERED_BY_GIT == true) && (env.BRANCH_NAME == 'master' || env.BRANCH_NAME == 'dev')}
+            expression { return (IS_TRIGGERED_BY_GIT == false && IS_TEST_CATEGORY_LENGTH_EQUALS_NULL == true) || (IS_TRIGGERED_BY_GIT == true && (env.BRANCH_NAME == 'master' || env.BRANCH_NAME == 'dev'))}
             }
        steps {
                 echo '----NotMasterNotDevNotGitNotParam-----'
-                echo 'Test without Category In Master'  
-                echo "Build_Number = ${BUILD_NUMBER}"
+                echo 'Test without Category'            
                 dir("CRUDCore") {
                     sh "ls -la"
                     sh "hostname"
@@ -90,37 +90,32 @@ steps {
                    }                                       
             }
    }
-    stage('Test without Category In Master; run all tests') {
+    stage('Test without Category; run all tests in test server') {
        agent { node { label 'homenode' } }
        when {         
-                expression { return (IS_TRIGGERED_BY_GIT == false && IS_TEST_CATEGORY_LENGTH_EQUALS_NULL == true && env.BRANCH_NAME == 'master') || (IS_TRIGGERED_BY_GIT == true && env.BRANCH_NAME == 'master')}
+                //expression { return (IS_TRIGGERED_BY_GIT == false && IS_TEST_CATEGORY_LENGTH_EQUALS_NULL == true && env.BRANCH_NAME == 'master') || (IS_TRIGGERED_BY_GIT == true && env.BRANCH_NAME == 'master')}
+                //expression { return ((IS_TRIGGERED_BY_GIT == false && IS_TEST_CATEGORY_LENGTH_EQUALS_NULL == true ) || IS_TRIGGERED_BY_GIT == true) && (env.BRANCH_NAME == 'master' || env.BRANCH_NAME == 'dev')}
+                expression { return (IS_TRIGGERED_BY_GIT == false && IS_TEST_CATEGORY_LENGTH_EQUALS_NULL == true) || (IS_TRIGGERED_BY_GIT == true && (env.BRANCH_NAME == 'master' || env.BRANCH_NAME == 'dev'))}
             }
        steps {
-                echo '----Test without Category In Master; run all tests-----'           
+                echo '----Test without Category in master or dev; run all tests in test server-----'           
                    sh "mkdir -p Test" 
                    dir("Test"){
                    git url: 'https://github.com/viktorderkach777/FluxDayAutomation.git'
-                   dir("FluxDayAutomation") {
-                      echo '----awesome-project-----'
-                      sh "ls -la"
-                      sh "pwd" 
-                      
+                   dir("FluxDayAutomation") {                  
                      sh 'dotnet restore'
-                     sh "dotnet test"
-                     echo '----end of awesome-project-----'
+                     sh "dotnet test"                     
                  }
               }      
             }
    }
-   stage('Test without Category In Master; start webapp with docker-compose') {
+   stage('Test without Category In Master; start webapp with docker-compose in production server') {
        agent { node { label 'ubuntu' } }
        when {         
-                expression { return (IS_TRIGGERED_BY_GIT == false && IS_TEST_CATEGORY_LENGTH_EQUALS_NULL == true) || (IS_TRIGGERED_BY_GIT == true && env.BRANCH_NAME == 'master')}
+                expression { return ((IS_TRIGGERED_BY_GIT == false && IS_TEST_CATEGORY_LENGTH_EQUALS_NULL == true) || IS_TRIGGERED_BY_GIT == true) && env.BRANCH_NAME == 'master'}
             }
        steps {
-                echo '----NotMasterNotDevNotGitNotParam-----'
-                echo 'Test without Category In Master'  
-                echo "Build_Number = ${BUILD_NUMBER}"
+                echo '----Test without Category In Master; start webapp with docker-compose in production server-----'               
                 dir("CRUDCore") {
                     sh "ls -la"
                     sh "hostname"
@@ -220,7 +215,7 @@ post {
       echo "Sending message to Slack"
       slackSend (color: "${env.SLACK_COLOR_GOOD}",
                  channel: "${env.SLACK_CHANNEL}",
-                 message: "*SUCCESS:* Job ${env.JOB_NAME} build ${env.BUILD_NUMBER} by ${env.USER_ID} - ${env.BUILD_USER} - ${env.BUILD_USER_ID}")
+                 message: "*SUCCESS:* Job ${env.JOB_NAME} build ${env.BUILD_NUMBER}")
     } // success
     failure {
 
