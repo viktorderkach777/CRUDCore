@@ -115,7 +115,8 @@ stages {
                     """
                   }
                   echo "Cleaning-up job workspace of node ubuntu"
-                  //deleteDir()                              
+                  sh "docker images -q -f dangling=true | xargs --no-run-if-empty docker rmi"
+                  deleteDir()                              
             }
    }
    stage('Test with Category') {
@@ -140,13 +141,14 @@ stages {
               }      
         }
    }
-    // stage("Clean Workspace of homenode") {
-    //   agent { node { label 'homenode' } }
-    //   steps {
-    //     echo "Cleaning-up job workspace of homenode"
-    //     deleteDir()
-    //   } 
-    // } 
+    stage("Clean Workspace of homenode") {
+      agent { node { label 'homenode' } }
+      steps {
+        echo "Cleaning-up job workspace of homenode"
+        sh "docker images -q -f dangling=true | xargs --no-run-if-empty docker rmi"
+        deleteDir()
+      } 
+    } 
 }
 post {
     // success {
