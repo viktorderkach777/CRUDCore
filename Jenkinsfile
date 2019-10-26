@@ -63,8 +63,9 @@ stages {
                    dir("Test"){
                    git url: "${env.TEST_GIT_URL}"
                    dir("FluxDayAutomation") {                  
-                     sh 'dotnet restore'
-                     sh "dotnet test"                     
+                     //sh 'dotnet restore'
+                     //sh "dotnet test" 
+                     sh "docker build -f WithoutTestParameters/Dockerfile ."                    
                    }                 
               }      
             }
@@ -131,8 +132,9 @@ stages {
                       echo '----test of FluxDayAutomation-----'
                       sh "ls -la"
                       sh "pwd"                      
-                      sh 'dotnet restore'
-                      sh "dotnet test --filter TestCategory=${params.TestCategory}"
+                      //sh 'dotnet restore'
+                      //sh "dotnet test --filter TestCategory=${params.TestCategory}"
+                      sh "docker build --build-arg variable_name=${params.TestCategory} -f WithTestParameters/Dockerfile ."
                       echo '----end of test of FluxDayAutomation-----'
                  }
               }      
