@@ -24,7 +24,10 @@ pipeline {
     SLACK_COLOR_DANGER  = '#E01563'
     SLACK_COLOR_INFO    = '#6ECADC'
     SLACK_COLOR_WARNING = '#FFC300'
-    SLACK_COLOR_GOOD    = '#3EB991'   
+    SLACK_COLOR_GOOD    = '#3EB991'
+    JOB = ''
+    BUILD = ''
+    USER_ID = ''   
   }
 
 stages {
@@ -41,7 +44,10 @@ stages {
        steps {
          // get user that has started the build
        //wrap([$class: 'BuildUser']) { script { env.USER_ID = "${BUILD_USER_ID}" } }
-       script {     
+       script {
+               JOB = Jenkins.getInstance().getItemByFullName(env.JOB_BASE_NAME, Job.class)
+               BUILD = job.getBuildByNumber(env.BUILD_ID as int)
+               USER_ID = build.getCause(Cause.UserIdCause).getUserId()     
                IS_TRIGGERED_BY_GIT = (currentBuild.getBuildCauses('hudson.model.Cause$UserIdCause')).toString().equals("[]")
                IS_TEST_CATEGORY_LENGTH_EQUALS_NULL = (params.TestCategory).trim().length() == 0
           }       
