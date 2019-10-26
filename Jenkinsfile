@@ -115,7 +115,7 @@ stages {
                     """
                   }
                   echo "Cleaning-up job workspace of node ubuntu"
-                  deleteDir()                              
+                  //deleteDir()                              
             }
    }
    stage('Test with Category') {
@@ -140,13 +140,13 @@ stages {
               }      
         }
    }
-    stage("Clean Workspace of homenode") {
-      agent { node { label 'homenode' } }
-      steps {
-        echo "Cleaning-up job workspace of homenode"
-        deleteDir()
-      } 
-    } 
+    // stage("Clean Workspace of homenode") {
+    //   agent { node { label 'homenode' } }
+    //   steps {
+    //     echo "Cleaning-up job workspace of homenode"
+    //     deleteDir()
+    //   } 
+    // } 
 }
 post {
     // success {
