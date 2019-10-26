@@ -16,20 +16,18 @@ pipeline {
     DOCKER_HUB_NAME = 'viktorderkach7777/touristapp'
     WEB_SERVER_IMAGE_NAME = 'crudcore_web:latest'
     TEST_GIT_URL = 'https://github.com/viktorderkach777/FluxDayAutomation.git'
-    DEPLOY_NODE = 'ubuntu'
-    TEST_NODE = 'homenode' 
 
     // Slack configuration
     SLACK_CHANNEL = '#touristapp'
     SLACK_COLOR_DANGER  = '#E01563'
     SLACK_COLOR_INFO    = '#6ECADC'
     SLACK_COLOR_WARNING = '#FFC300'
-    SLACK_COLOR_GOOD    = '#3EB991'     
+    SLACK_COLOR_GOOD    = '#3EB991'   
   }
 
 stages {
     stage('Checkout') {
-       agent { node { label '${env.TEST_NODE}' } }
+       agent { node { label 'homenode' } }
        steps {         
        script {     
                IsTriggeredByGit = (currentBuild.getBuildCauses('hudson.model.Cause$UserIdCause')).toString().equals("[]")
@@ -41,7 +39,7 @@ stages {
         }
    }
    stage('Test without Category; start webapp in test server with docker-compose') {
-       agent { node { label '${env.TEST_NODE}' } }
+       agent { node { label 'homenode' } }
        when {           
             expression { return (IsTriggeredByGit == false && IsTestCategoryLengthEqualsNull == true) || (IsTriggeredByGit == true && (env.BRANCH_NAME == 'master' || env.BRANCH_NAME == 'dev'))}
             }
@@ -55,7 +53,7 @@ stages {
             }
    }
     stage('Test without Category; run all tests in test server') {
-       agent { node { label '${env.TEST_NODE}' } }
+       agent { node { label 'homenode' } }
        when {                
                 expression { return (IsTriggeredByGit == false && IsTestCategoryLengthEqualsNull == true) || (IsTriggeredByGit == true && (env.BRANCH_NAME == 'master' || env.BRANCH_NAME == 'dev'))}
             }
@@ -73,7 +71,7 @@ stages {
             }
    }
    stage('Test without Category In Master; start webapp with docker-compose in production server') {
-       agent { node { label '${env.DEPLOY_NODE}' } }
+       agent { node { label 'ubuntu' } }
        when {         
                 expression { return ((IsTriggeredByGit == false && IsTestCategoryLengthEqualsNull == true) || IsTriggeredByGit == true) && env.BRANCH_NAME == 'master'}
             }
@@ -87,7 +85,7 @@ stages {
             }
    } 
    stage('Test without Category In Master; pushing of the docker image') {
-       agent { node { label '${env.DEPLOY_NODE}' } }
+       agent { node { label 'ubuntu' } }
        when {         
                 expression { return ((IsTriggeredByGit == false && IsTestCategoryLengthEqualsNull == true) || IsTriggeredByGit == true) && env.BRANCH_NAME == 'master'}
             }
@@ -123,7 +121,7 @@ stages {
             }
    }
    stage('Test with Category') {
-       agent { node { label '${env.TEST_NODE}' } }
+       agent { node { label 'homenode' } }
        when {         
                 expression { return IsTriggeredByGit == false && IsTestCategoryLengthEqualsNull == false}
             }
@@ -145,7 +143,7 @@ stages {
         }
    }
     stage("Clean Workspace of homenode") {
-      agent { node { label '${env.TEST_NODE}' } }
+      agent { node { label 'homenode' } }
       steps {
         echo "Cleaning-up job workspace of homenode"
         sh 'docker ps -q -f status=exited | xargs --no-run-if-empty docker rm'
