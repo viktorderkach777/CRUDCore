@@ -24,30 +24,14 @@ pipeline {
     SLACK_COLOR_DANGER  = '#E01563'
     SLACK_COLOR_INFO    = '#6ECADC'
     SLACK_COLOR_WARNING = '#FFC300'
-    SLACK_COLOR_GOOD    = '#3EB991'
-    JOB = ''
-    BUILD = ''
-    USER_ID = ''   
+    SLACK_COLOR_GOOD    = '#3EB991'   
   }
 
 stages {
-  stage('build user') {
-      agent { node { label 'ubuntu' } }
-      steps {
-        wrap([$class: 'BuildUser']) {
-          sh 'echo "${BUILD_USER}"'
-        }
-      }
-    }
     stage('Checkout') {
        agent { node { label 'ubuntu' } }
-       steps {
-         // get user that has started the build
-       //wrap([$class: 'BuildUser']) { script { env.USER_ID = "${BUILD_USER_ID}" } }
-       script {
-               JOB = Jenkins.getInstance().getItemByFullName(env.JOB_BASE_NAME, Job.class)
-               BUILD = job.getBuildByNumber(env.BUILD_ID as int)
-               USER_ID = build.getCause(Cause.UserIdCause).getUserId()     
+       steps {         
+       script {     
                IS_TRIGGERED_BY_GIT = (currentBuild.getBuildCauses('hudson.model.Cause$UserIdCause')).toString().equals("[]")
                IS_TEST_CATEGORY_LENGTH_EQUALS_NULL = (params.TestCategory).trim().length() == 0
           }       
@@ -179,7 +163,7 @@ post {
       echo "Sending message to Slack"
       slackSend (color: "${env.SLACK_COLOR_GOOD}",
                  channel: "${env.SLACK_CHANNEL}",
-                 message: "*SUCCESS:* Job ${env.JOB_NAME} build ${env.BUILD_NUMBER} by ${env.USER_ID}")
+                 message: "*SUCCESS:* Job ${env.JOB_NAME} build ${env.BUILD_NUMBER}")
     } 
     failure {
       echo "Sending message to Slack"
