@@ -27,7 +27,7 @@ pipeline {
 
 stages {
     stage('Checkout') {
-       agent { node { label 'ubuntu' } }
+       agent { node { label 'homenode' } }
        steps {         
        script {     
                IsTriggeredByGit = (currentBuild.getBuildCauses('hudson.model.Cause$UserIdCause')).toString().equals("[]")
