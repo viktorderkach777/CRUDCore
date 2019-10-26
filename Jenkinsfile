@@ -68,7 +68,7 @@ stages {
                    dir("FluxDayAutomation") {                  
                      sh 'dotnet restore'
                      sh "dotnet test"                     
-                 }
+                   }                 
               }      
             }
    }
@@ -115,7 +115,9 @@ stages {
                     sh """
                     docker rmi ${DOCKER_HUB_NAME}:latest
                     """
-                  }                              
+                  }
+                  echo "Cleaning-up job workspace of node ubuntu"
+                  deleteDir()                              
             }
    }
    stage('Test with Category') {
@@ -139,6 +141,13 @@ stages {
               }      
         }
    }
+    stage("Clean Workspace of homenode") {
+      agent { node { label 'homenode' } }
+      steps {
+        echo "Cleaning-up job workspace of homenode"
+        deleteDir()
+      } 
+    } 
 }
 post {
     // success {
