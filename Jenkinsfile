@@ -146,6 +146,7 @@ stages {
       agent { node { label 'homenode' } }
       steps {
         echo "Cleaning-up job workspace of homenode"
+        sh "ls -la"
         dir("CRUDCore") { 
             sh "ls -la"
             sh "hostname"            
