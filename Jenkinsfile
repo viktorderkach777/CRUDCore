@@ -141,7 +141,7 @@ stages {
                  }
               }      
         }
-   
+   }
     stage("Clean Workspace of homenode") {
       agent { node { label 'homenode' } }
       steps {
@@ -157,7 +157,6 @@ stages {
         deleteDir()
       } 
     } 
-}
 }
 post {
     // success {
