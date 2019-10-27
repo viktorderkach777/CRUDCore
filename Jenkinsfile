@@ -38,13 +38,13 @@ stages {
           echo "IsTestCategoryLengthEqualsNull = ${IsTestCategoryLengthEqualsNull}"
         }
    }
-   stage('Test without Category; start webapp in test server with docker-compose') {
+   stage('Start webapp in test server with docker-compose') {
        agent { node { label 'homenode' } }
        when {           
-            expression { return (IsTriggeredByGit == false && IsTestCategoryLengthEqualsNull == true) || (IsTriggeredByGit == true && (env.BRANCH_NAME == 'master' || env.BRANCH_NAME == 'dev'))}
+             expression { return (IsTriggeredByGit == false) || (IsTriggeredByGit == true && (env.BRANCH_NAME == 'master' || env.BRANCH_NAME == 'dev'))}
             }
        steps {                
-                echo 'Test without Category; start webapp in test server with docker-compose'            
+                echo 'Start webapp in test server with docker-compose'            
                 dir("CRUDCore") {
                     sh "ls -la"
                     sh "hostname"
@@ -146,6 +146,12 @@ stages {
       agent { node { label 'homenode' } }
       steps {
         echo "Cleaning-up job workspace of homenode"
+        sh "ls -la"
+        dir("CRUDCore") { 
+            sh "ls -la"
+            sh "hostname"            
+            sh "docker-compose down" 
+        }  
         sh 'docker ps -q -f status=exited | xargs --no-run-if-empty docker rm'
         sh "docker images -q -f dangling=true | xargs --no-run-if-empty docker rmi"
         deleteDir()
