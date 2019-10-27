@@ -38,10 +38,11 @@ stages {
           echo "IsTestCategoryLengthEqualsNull = ${IsTestCategoryLengthEqualsNull}"
         }
    }
-   stage('Test without Category; start webapp in test server with docker-compose') {
+   stage('Start webapp in test server with docker-compose') {
        agent { node { label 'homenode' } }
        when {           
-            expression { return (IsTriggeredByGit == false && IsTestCategoryLengthEqualsNull == true) || (IsTriggeredByGit == true && (env.BRANCH_NAME == 'master' || env.BRANCH_NAME == 'dev'))}
+            //expression { return (IsTriggeredByGit == false && IsTestCategoryLengthEqualsNull == true) || (IsTriggeredByGit == true && (env.BRANCH_NAME == 'master' || env.BRANCH_NAME == 'dev'))}
+             expression { return (IsTriggeredByGit == false) || (IsTriggeredByGit == true && (env.BRANCH_NAME == 'master' || env.BRANCH_NAME == 'dev'))}
             }
        steps {                
                 echo 'Test without Category; start webapp in test server with docker-compose'            
