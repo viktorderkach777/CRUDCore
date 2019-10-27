@@ -147,6 +147,7 @@ stages {
       agent { node { label 'homenode' } }
       steps {
         echo "Cleaning-up job workspace of homenode"
+        //sh 'docker stop '
         sh "ls -la"
         dir("CRUDCore") { 
             sh "ls -la"
