@@ -41,7 +41,6 @@ stages {
    stage('Start webapp in test server with docker-compose') {
        agent { node { label 'homenode' } }
        when {           
-            //expression { return (IsTriggeredByGit == false && IsTestCategoryLengthEqualsNull == true) || (IsTriggeredByGit == true && (env.BRANCH_NAME == 'master' || env.BRANCH_NAME == 'dev'))}
              expression { return (IsTriggeredByGit == false) || (IsTriggeredByGit == true && (env.BRANCH_NAME == 'master' || env.BRANCH_NAME == 'dev'))}
             }
        steps {                
@@ -116,9 +115,9 @@ stages {
                     """
                   }
                   echo "Cleaning-up job workspace of node ubuntu"
-                  // sh 'docker ps -q -f status=exited | xargs --no-run-if-empty docker rm'
-                  // sh "docker images -q -f dangling=true | xargs --no-run-if-empty docker rmi"
-                  // deleteDir()                              
+                  sh 'docker ps -q -f status=exited | xargs --no-run-if-empty docker rm'
+                  sh "docker images -q -f dangling=true | xargs --no-run-if-empty docker rmi"
+                  deleteDir()                              
             }
    }
    stage('Test with Category') {
@@ -147,7 +146,6 @@ stages {
       agent { node { label 'homenode' } }
       steps {
         echo "Cleaning-up job workspace of homenode"
-        //sh 'docker stop '
         sh "ls -la"
         dir("CRUDCore") { 
             sh "ls -la"
@@ -156,7 +154,7 @@ stages {
         }  
         sh 'docker ps -q -f status=exited | xargs --no-run-if-empty docker rm'
         sh "docker images -q -f dangling=true | xargs --no-run-if-empty docker rmi"
-        //deleteDir()
+        deleteDir()
       } 
     } 
 }
