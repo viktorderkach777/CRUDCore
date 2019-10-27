@@ -146,7 +146,9 @@ stages {
       agent { node { label 'homenode' } }
       steps {
         echo "Cleaning-up job workspace of homenode"
-        dir("CRUDCore") {             
+        dir("CRUDCore") { 
+            sh "ls -la"
+            sh "hostname"            
             sh "docker-compose down" 
         }  
         sh 'docker ps -q -f status=exited | xargs --no-run-if-empty docker rm'
