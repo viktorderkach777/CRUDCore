@@ -146,6 +146,9 @@ stages {
       agent { node { label 'homenode' } }
       steps {
         echo "Cleaning-up job workspace of homenode"
+        dir("CRUDCore") {             
+            sh "docker-compose down" 
+        }  
         sh 'docker ps -q -f status=exited | xargs --no-run-if-empty docker rm'
         sh "docker images -q -f dangling=true | xargs --no-run-if-empty docker rmi"
         deleteDir()
