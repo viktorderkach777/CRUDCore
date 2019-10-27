@@ -116,9 +116,9 @@ stages {
                     """
                   }
                   echo "Cleaning-up job workspace of node ubuntu"
-                  sh 'docker ps -q -f status=exited | xargs --no-run-if-empty docker rm'
-                  sh "docker images -q -f dangling=true | xargs --no-run-if-empty docker rmi"
-                  deleteDir()                              
+                  // sh 'docker ps -q -f status=exited | xargs --no-run-if-empty docker rm'
+                  // sh "docker images -q -f dangling=true | xargs --no-run-if-empty docker rmi"
+                  // deleteDir()                              
             }
    }
    stage('Test with Category') {
