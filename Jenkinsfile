@@ -165,7 +165,7 @@ stages {
                     jdk: '',
                     properties: [],
                     reportBuildPolicy: 'ALWAYS',
-                    results: [[path: '/home/viktorderkach7viktorderkach777/allure-results']]
+                    results: [[path: 'target/allure-results']]
             ])
     }
     }
