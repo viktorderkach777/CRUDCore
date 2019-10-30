@@ -156,7 +156,20 @@ stages {
         sh "docker images -q -f dangling=true | xargs --no-run-if-empty docker rmi"
         deleteDir()
       } 
-    } 
+    }
+  stage('reports') {
+    steps {
+    script {
+            allure([
+                    includeProperties: false,
+                    jdk: '',
+                    properties: [],
+                    reportBuildPolicy: 'ALWAYS',
+                    results: [[path: '/home/viktorderkach7viktorderkach777/allure-results']]
+            ])
+    }
+    }
+}
 }
 post {
     // success {
