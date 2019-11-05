@@ -157,32 +157,8 @@ stages {
         deleteDir()
       } 
     }
-  stage('reports') {
-    steps {
-    script {
-            allure([
-                    includeProperties: false,
-                    jdk: '',
-                    properties: [],
-                    reportBuildPolicy: 'ALWAYS',
-                    results: [[path: 'target/allure-results']]
-            ])
-    }
-    }
-}
 }
 post {
-    // success {
-    //     slackSend channel: '#touristapp',
-    //               color: 'good',
-    //               message: "The pipeline ${currentBuild.fullDisplayName} completed successfully."
-    // }
-    // failure {
-    //       slackSend channel: '#touristapp',
-    //               color: 'danger',
-    //               message: "The pipeline ${currentBuild.fullDisplayName} failed."
-    //    }
-
     aborted {
       echo "Sending message to Slack"
       slackSend (color: "${env.SLACK_COLOR_WARNING}",
