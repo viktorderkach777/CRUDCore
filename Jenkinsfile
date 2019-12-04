@@ -18,7 +18,7 @@ pipeline {
     TEST_GIT_URL = 'https://github.com/viktorderkach777/FluxDayAutomation.git'
 
     // Slack configuration
-    SLACK_CHANNEL = '#touristapp'
+    SLACK_CHANNEL = '#website'
     SLACK_COLOR_DANGER  = '#E01563'
     SLACK_COLOR_INFO    = '#6ECADC'
     SLACK_COLOR_WARNING = '#FFC300'
