@@ -54,6 +54,7 @@ stages {
    }
     stage('Test without Category; run all tests in test server') {
        agent { node { label 'homenode' } }
+	   options { skipDefaultCheckout true }
        when {                
                 expression { return (IsTriggeredByGit == false && IsTestCategoryLengthEqualsNull == true) || (IsTriggeredByGit == true && (env.BRANCH_NAME == 'master' || env.BRANCH_NAME == 'dev'))}
             }
@@ -86,6 +87,7 @@ stages {
    } 
    stage('Test without Category In Master; pushing of the docker image') {
        agent { node { label 'ubuntu' } }
+	   options { skipDefaultCheckout true }
        when {         
                 expression { return ((IsTriggeredByGit == false && IsTestCategoryLengthEqualsNull == true) || IsTriggeredByGit == true) && env.BRANCH_NAME == 'master'}
             }
@@ -122,6 +124,7 @@ stages {
    }
    stage('Test with Category') {
        agent { node { label 'homenode' } }
+	   options { skipDefaultCheckout true }
        when {         
                 expression { return IsTriggeredByGit == false && IsTestCategoryLengthEqualsNull == false}
             }
@@ -144,6 +147,7 @@ stages {
    }
     stage("Clean Workspace of homenode") {
       agent { node { label 'homenode' } }
+	  options { skipDefaultCheckout true }
       steps {
         echo "Cleaning-up job workspace of homenode"
         sh "ls -la"
